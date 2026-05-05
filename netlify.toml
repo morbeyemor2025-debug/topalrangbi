@@ -5,11 +5,9 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# ── Next.js via plugin officiel ──────────────────────────
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-# ── Redirections API → Netlify Functions ─────────────────
 [[redirects]]
   from   = "/api/queue"
   to     = "/.netlify/functions/queue"
@@ -46,26 +44,16 @@
   status = 200
   force  = true
 
-# ── Headers de sécurité ───────────────────────────────────
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options        = "DENY"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy        = "strict-origin-when-cross-origin"
-    Permissions-Policy     = "camera=(), microphone=(), geolocation=()"
+[[redirects]]
+  from   = "/s/:slug"
+  to     = "/s/:slug"
+  status = 200
+  force  = false
 
-[[headers]]
-  for = "/.netlify/functions/*"
-  [headers.values]
-    Access-Control-Allow-Origin  = "*"
-    Access-Control-Allow-Methods = "GET, POST, PATCH, DELETE, OPTIONS"
-    Access-Control-Allow-Headers = "Content-Type, Authorization, x-salon-id"
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200
 
-# ── Cron jobs Netlify (remplace Vercel cron) ─────────────
 [functions]
   directory = "netlify/functions"
-
-[[edge_functions]]
-  path   = "/api/*"
-  function = "api-router"
