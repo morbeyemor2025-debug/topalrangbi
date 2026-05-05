@@ -1,0 +1,71 @@
+[build]
+  command   = "npm run build"
+  publish   = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# ── Next.js via plugin officiel ──────────────────────────
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# ── Redirections API → Netlify Functions ─────────────────
+[[redirects]]
+  from   = "/api/queue"
+  to     = "/.netlify/functions/queue"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from   = "/api/auth"
+  to     = "/.netlify/functions/auth"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from   = "/api/clients"
+  to     = "/.netlify/functions/clients"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from   = "/api/analytics"
+  to     = "/.netlify/functions/analytics"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from   = "/api/cron"
+  to     = "/.netlify/functions/cron"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from   = "/api/cron/reminders"
+  to     = "/.netlify/functions/cron-reminders"
+  status = 200
+  force  = true
+
+# ── Headers de sécurité ───────────────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options        = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy        = "strict-origin-when-cross-origin"
+    Permissions-Policy     = "camera=(), microphone=(), geolocation=()"
+
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin  = "*"
+    Access-Control-Allow-Methods = "GET, POST, PATCH, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization, x-salon-id"
+
+# ── Cron jobs Netlify (remplace Vercel cron) ─────────────
+[functions]
+  directory = "netlify/functions"
+
+[[edge_functions]]
+  path   = "/api/*"
+  function = "api-router"
